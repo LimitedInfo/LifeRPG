@@ -12,6 +12,11 @@ function Goal:initialize(name, progress, x, y)
     self.progress = progress or 0 
 end
 
+function Goal:draw()
+    love.graphics.print(self.name, self.x, self.y)
+    love.graphics.print(self.progress, self.x, self.y + 20)
+end
+
 function Goal:incrementProgress()
     self.progress = self.progress + 1
 end
