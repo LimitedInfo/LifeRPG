@@ -28,3 +28,5 @@ end
 function UIElement:click()
     -- override in subclass
 end
+
+return UIElement

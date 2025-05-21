@@ -13,7 +13,7 @@ function love.load()
     })
 
     -- Set window position on the screen (e.g., top-left corner: 100,100)
-    love.window.setPosition(1800, -1000)
+    love.window.setPosition(2100, 400)
 
 
     x = 100
@@ -75,9 +75,6 @@ function love.mousepressed(mx, my, buttonPressed)
             goal:incrementProgress()
         end
     end
-
-    if isClicked(player, mx, my) then
-    
 end
 
 function isClicked(object, mx, my)
@@ -97,9 +94,9 @@ function love.draw()
         player.goals[enumerator].x = xValues[enumerator]
         player.goals[enumerator].y = 240
 
-        resetButton = Button:new("Reset", xValues[enumerator], 200)
+        resetButton = Button:new(xValues[enumerator], 200, 120, 40, "Reset", function() end)
 
-        love.graphics.print(resetButton.name, xValues[enumerator], 220)
+        love.graphics.print(resetButton.label, xValues[enumerator], 220)
         love.graphics.print(player.goals[enumerator].name, xValues[enumerator], 240)
         love.graphics.print(player.goals[enumerator].progress, xValues[enumerator], 260)
 
@@ -107,11 +104,6 @@ function love.draw()
             love.graphics.rectangle("fill", xValues[enumerator] + ((i-1) * 25), 280, 20, 20)
         end
     end
-
-    
-
-
-
 end
 
 
