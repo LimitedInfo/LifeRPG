@@ -16,6 +16,9 @@ function love.load()
     love.window.setPosition(2100, 400)
 
 
+    
+
+
     x = 100
     screenWidth = love.graphics.getWidth()
     screenHeight = love.graphics.getHeight()
@@ -25,6 +28,14 @@ function love.load()
     player:addGoal("learn python")
     player:addGoal("learn javascript")
     player:addGoal("learn html")
+
+    goalButtons = {}
+    for i, goal in pairs(player.goals) do
+        table.insert(goalButtons, Button:new(100 + (i * 150), 200, 120, 40, "Reset", function()
+            goal.progress = 0
+            print("Reset goal: " .. goal.name)
+        end))
+    end
 
     
 end
@@ -75,7 +86,16 @@ function love.mousepressed(mx, my, buttonPressed)
             goal:incrementProgress()
         end
     end
+
+    if buttonPressed == 1 then
+        for _, b in ipairs(goalButtons) do
+            if b:isHovered(mx, my) then
+                b:click()
+            end
+        end
+    end
 end
+
 
 function isClicked(object, mx, my)
     return mx >= object.x and mx <= object.x + object.width and
@@ -94,9 +114,10 @@ function love.draw()
         player.goals[enumerator].x = xValues[enumerator]
         player.goals[enumerator].y = 240
 
-        resetButton = Button:new(xValues[enumerator], 200, 120, 40, "Reset", function() end)
+        goalButtons[enumerator]:draw()
+        goalButtons[enumerator].x = xValues[enumerator]
 
-        love.graphics.print(resetButton.label, xValues[enumerator], 220)
+        --love.graphics.print(resetButton.label, xValues[enumerator], 220)
         love.graphics.print(player.goals[enumerator].name, xValues[enumerator], 240)
         love.graphics.print(player.goals[enumerator].progress, xValues[enumerator], 260)
 
