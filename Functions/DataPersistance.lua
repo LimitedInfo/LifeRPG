@@ -15,3 +15,9 @@ function loadData(filename)
         return nil
     end
 end
+
+return {
+    saveData = saveData,
+    loadData = loadData
+}
+

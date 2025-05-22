@@ -5,8 +5,7 @@ local dp = require("functions.DataPersistance")
 local githubCommits = require("GithubCommits")
 
 function love.load()
-    --local savedData = dp.loadData("data.json")
-
+    local savedData = dp.loadData("data.json")
 
     love.window.setPosition(2100, 400)
     screenWidth = love.graphics.getWidth()
@@ -18,34 +17,31 @@ function love.load()
     goalNames = {"learn lua", "learn love2d", "learn python", "learn javascript", "learn html"}
     for i = 1, 5 do
         player:addGoal(goalNames[i])
+
+        if savedData and savedData[goalNames[i]] then
+            player.goals[i].progress = savedData[goalNames[i]]
+        end
     end
-
-
 
     goalButtons = {}
     for i, goal in pairs(player.goals) do
         table.insert(goalButtons, Button:new(100 + (i * 150), 200, 120, 40, "Reset", function()
-            goal.progress = 0
-            print("Reset goal: " .. goal.name)
+        print("Reset goal: " .. goal.name)
         end))
-
-
-        -- load data
-        -- if savedData then
-        --     savedData[goal.name] = goal.progress
-        -- end
     end
-
-
-    
-
-
 end
 
 function love.mousepressed(mx, my, buttonPressed)
     for _, goal in ipairs(player.goals) do
         if goal:isClicked(mx, my) then
             goal:incrementProgress()
+
+            data = {}
+            for _, goal in ipairs(player.goals) do
+                data[goal.name] = goal.progress
+            end
+
+            dp.saveData(data, "data.json")
         end
     end
 
