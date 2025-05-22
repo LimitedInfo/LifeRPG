@@ -1,4 +1,4 @@
-local Classs = require("middleclass")
+local Classs = require("libraries.middleclass")
 local UIElement = require("Element")
 
 Button = setmetatable({}, {__index = UIElement})

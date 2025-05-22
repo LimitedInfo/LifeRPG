@@ -1,4 +1,4 @@
-local Classs = require("middleclass")
+local Classs = require("libraries.middleclass")
 
 
 local Goal = Classs("Goal")

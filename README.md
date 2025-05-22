@@ -10,3 +10,12 @@ Lua provides functions like ipairs to iterate over tables with sequential intege
 
 github contributions data: 
 res = requests.get("https://github-contributions-api.jogruber.de/v4/LimitedInfo")
+
+
+### ideas
+
+- add some logic to make chaining of hours focused add levels to your character. 
+- could be multiplayer as well so you can see others peoples accomplishments. 
+- or while doing activities in real life your character your doing it concurrently. 
+- these levels can be used in game to do different skills and acquire different resources. 
+- every level you get could be a building block to use to create something as well. 

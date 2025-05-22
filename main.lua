@@ -1,11 +1,18 @@
 local Player = require("Player")
 local Button = require("Button")
-local fts = require("Functions")
+local fts = require("functions.Functions")
+local dp = require("functions.DataPersistance")
+local githubCommits = require("GithubCommits")
 
 function love.load()
+    --local savedData = dp.loadData("data.json")
+
+
     love.window.setPosition(2100, 400)
     screenWidth = love.graphics.getWidth()
     screenHeight = love.graphics.getHeight()
+
+    githubCommits.createYearGrid()
 
     player = Player:new("Andrew", 100, 100)
     goalNames = {"learn lua", "learn love2d", "learn python", "learn javascript", "learn html"}
@@ -13,13 +20,26 @@ function love.load()
         player:addGoal(goalNames[i])
     end
 
+
+
     goalButtons = {}
     for i, goal in pairs(player.goals) do
         table.insert(goalButtons, Button:new(100 + (i * 150), 200, 120, 40, "Reset", function()
             goal.progress = 0
             print("Reset goal: " .. goal.name)
         end))
+
+
+        -- load data
+        -- if savedData then
+        --     savedData[goal.name] = goal.progress
+        -- end
     end
+
+
+    
+
+
 end
 
 function love.mousepressed(mx, my, buttonPressed)
@@ -41,6 +61,8 @@ end
 function love.draw()
     player:draw()
     xValues = fts.evenlySpaceObjects(player.goals)
+
+    githubCommits.drawGrid()
 
     enumerator = 0
     for goal, progress in pairs(player.goals) do
