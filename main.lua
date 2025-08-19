@@ -7,7 +7,7 @@ local githubCommits = require("GithubCommits")
 function love.load()
     local savedData = dp.loadData("data.json")
 
-    love.window.setPosition(2100, 400)
+    -- love.window.setPosition(2100, 400)
     screenWidth = love.graphics.getWidth()
     screenHeight = love.graphics.getHeight()
 
