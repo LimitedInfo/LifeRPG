@@ -54,7 +54,6 @@ end
 function getContributionsByYear(year)
     data = getGithubContributionsData()
 
-    print("\n=== Contributions by Year (from contributions array) ===")
     local yearContributions = {}
     
     for i, contribution in ipairs(data.contributions) do
@@ -63,11 +62,6 @@ function getContributionsByYear(year)
             table.insert(yearContributions, contribution)  -- Fixed: was yearContributions.insert
         end
     end
-
-    for i, contribution in ipairs(yearContributions) do
-        print("Date: " .. contribution.date .. ", Count: " .. contribution.count .. ", Level: " .. contribution.level)  -- Fixed: was just contribution
-    end
-
     return yearContributions
 end
 
@@ -96,10 +90,34 @@ end
 
 -- Function to draw the grid
 local function drawGrid(contributions)
-    local contributions = getContributionsByYear("2025")
     for i, box in ipairs(calendarBoxes) do
-        print(contributions[i].count)
-        love.graphics.rectangle("fill", box.x, 300 + box.y, boxSize, boxSize)
+        -- we need to draw the boxes relative to the bottom middle of the screen dynamically
+        local screenWidth = love.graphics.getWidth()
+        local screenHeight = love.graphics.getHeight()
+        local gridWidth = (boxSize + margin) * math.ceil(daysInYear / 7)
+        local startX = (screenWidth - gridWidth) / 2
+        local startY = screenHeight - (boxSize + margin) * 7 - 50
+
+        -- lets make these boxes Elements to enable UIHover
+        local boxElement = UIElement:new(startX + box.x, startY + box.y, boxSize, boxSize)
+        
+        -- override the draw behavior to draw the box
+        boxElement.draw = function()
+            love.graphics.rectangle("fill", startX + box.x, startY + box.y, boxSize, boxSize)
+        end
+
+        -- set the draw behavior to draw the box
+        boxElement:draw()
+
+        -- lets set the hover behavior to display the date of the contribution in text
+        boxElement.hoverBehavior = function()
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.print(contributions[i].date, startX + box.x - 55, startY + box.y)
+        end
+
+        if boxElement:isHovered(love.mouse.getX(), love.mouse.getY()) then
+            boxElement.hoverBehavior()
+        end
 
         -- color the box based on the contributions
         if contributions[i].count > 0 then
@@ -112,7 +130,6 @@ local function drawGrid(contributions)
 end
 
 function determinePerformance(contributions)
-    local contributions = getContributionsByYear("2025")
     -- filter to dates within the last 7 days including today
     local today = os.date("*t")
     local sevenDaysAgo = {
@@ -126,8 +143,7 @@ function determinePerformance(contributions)
     local filteredContributions = {}
     for i, contribution in ipairs(contributions) do
         local contributionDate = os.time(parseDate(contribution.date))
-        print(contributionDate)
-        print(sevenDaysAgoDate)
+
         if contributionDate >= sevenDaysAgoDate then
             table.insert(filteredContributions, contribution)
         end
@@ -153,10 +169,10 @@ function determinePerformance(contributions)
 end
 
 
-print(determinePerformance())
-
 -- Return public API
 return {
     createYearGrid = createYearGrid,
-    drawGrid = drawGrid
+    drawGrid = drawGrid,
+    determinePerformance = determinePerformance,
+    getContributionsByYear = getContributionsByYear
 }

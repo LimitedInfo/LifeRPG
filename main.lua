@@ -8,11 +8,18 @@ function love.load()
     local savedData = dp.loadData("data.json")
 
     -- love.window.setPosition(2100, 400)
+    -- set window to larger size
+    love.window.setMode(1400, 900)
     screenWidth = love.graphics.getWidth()
     screenHeight = love.graphics.getHeight()
 
+    -- github related information
     githubCommits.createYearGrid()
+    contributions = githubCommits.getContributionsByYear("2025")
 
+    performanceRating = githubCommits.determinePerformance(contributions)
+
+    -- player related information
     player = Player:new("Andrew", 100, 100)
     goalNames = {"learn lua", "learn love2d", "learn python", "learn javascript", "learn html"}
     for i = 1, 5 do
@@ -26,6 +33,7 @@ function love.load()
     goalButtons = {}
     for i, goal in pairs(player.goals) do
         table.insert(goalButtons, Button:new(100 + (i * 150), 200, 120, 40, "Reset", function()
+        goal.progress = 0
         print("Reset goal: " .. goal.name)
         end))
     end
@@ -57,8 +65,11 @@ end
 function love.draw()
     player:draw()
     xValues = fts.evenlySpaceObjects(player.goals)
-
-    githubCommits.drawGrid()
+    
+    -- draw github grid
+    githubCommits.drawGrid(contributions)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print(performanceRating, 10, 10)
 
     enumerator = 0
     for goal, progress in pairs(player.goals) do

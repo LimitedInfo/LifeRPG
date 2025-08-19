@@ -31,12 +31,12 @@ package.path = package.path .. ";../?.lua;../?/init.lua"
 
 -- Usage
 local response = httpGet('https://github-contributions-api.jogruber.de/v4/LimitedInfo')
-print("Response:", response)
+--print("Response:", response)
 
 -- Parse JSON if needed (you already have dkjson)
 local json = require("libraries.dkjson")
 local data = json.decode(response)
 if data then
-    print("Parsed data:", data)
+    --print("Parsed data:", data)
     saveJsonToFile(response, "github_data.json")
 end
