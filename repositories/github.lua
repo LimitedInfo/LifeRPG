@@ -1,7 +1,12 @@
 
 
+-- https://github-contributions-api.jogruber.de/v4/GITHUB_USERNAME?y=2020
+-- https://github-contributions-api.jogruber.de/v4/GITHUB_USERNAME?y=2016&y=2017
+-- https://github-contributions-api.jogruber.de/v4/GITHUB_USERNAME?y=last
+-- https://github-contributions-api.jogruber.de/v4/GITHUB_USERNAME?y=all # default
+
 local function httpGet(url)
-    local handle = io.popen('curl -s "' .. url .. '"')
+    local handle = io.popen('curl -s -H "Cache-Control: no-cache" "' .. url .. '"')
     local result = handle:read("*a")
     handle:close()
     return result
