@@ -2,6 +2,8 @@
 package.path = package.path .. ";./libraries/?.lua"
 local json = require("libraries.dkjson")
 
+contributionGoal = 7
+
 function getGithubContributionsData()
     local file = io.open('repositories/github_data.json', "r")
     if file then
@@ -13,6 +15,14 @@ function getGithubContributionsData()
     end
 
     return json.decode(jsonString)
+end
+
+local function countTable(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
 end
 
 function printTable(t, indent)
@@ -34,6 +44,13 @@ function printTable(t, indent)
     end
 end
 
+function parseDate(date)
+    local year = string.sub(date, 1, 4)
+    local month = string.sub(date, 6, 7)
+    local day = string.sub(date, 9, 10)
+    return {year = year, month = month, day = day}
+end
+
 function getContributionsByYear(year)
     data = getGithubContributionsData()
 
@@ -53,8 +70,6 @@ function getContributionsByYear(year)
 
     return yearContributions
 end
-
-print(getContributionsByYear("2025"))
 
 -- Constants
 local daysInYear = 365  -- Use 366 for leap years
@@ -80,7 +95,7 @@ local function createYearGrid()
 end
 
 -- Function to draw the grid
-local function drawGrid()
+local function drawGrid(contributions)
     local contributions = getContributionsByYear("2025")
     for i, box in ipairs(calendarBoxes) do
         print(contributions[i].count)
@@ -88,13 +103,57 @@ local function drawGrid()
 
         -- color the box based on the contributions
         if contributions[i].count > 0 then
-            love.graphics.setColor(0, 1, 0, 1)
+            love.graphics.setColor(0, contributions[i].count * .25, 0, 1)
         else
-            love.graphics.setColor(1, 0, 0, 1)
+            love.graphics.setColor(.1, .1, .1, 1)
         end
         
     end
 end
+
+function determinePerformance(contributions)
+    local contributions = getContributionsByYear("2025")
+    -- filter to dates within the last 7 days including today
+    local today = os.date("*t")
+    local sevenDaysAgo = {
+        year = today.year,
+        month = today.month,
+        day = today.day - 7
+    }
+    local sevenDaysAgoDate = os.time(sevenDaysAgo)
+
+    -- filter contributions to only include dates within the last 7 days
+    local filteredContributions = {}
+    for i, contribution in ipairs(contributions) do
+        local contributionDate = os.time(parseDate(contribution.date))
+        print(contributionDate)
+        print(sevenDaysAgoDate)
+        if contributionDate >= sevenDaysAgoDate then
+            table.insert(filteredContributions, contribution)
+        end
+    end
+
+    local count = 0
+    for i, contribution in ipairs(filteredContributions) do
+        count = count + contribution.count * contribution.level
+    end
+ 
+    if count > contributionGoal then
+        performanceRating = 'Awesome'
+    elseif count > contributionGoal * .75 then
+        performanceRating = 'Good'
+    elseif count > contributionGoal * .5 then
+        performanceRating = 'Average'
+    else
+        performanceRating = 'Needs Improvement'
+    end
+
+
+    return performanceRating
+end
+
+
+print(determinePerformance())
 
 -- Return public API
 return {
